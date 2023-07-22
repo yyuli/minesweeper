@@ -9,6 +9,7 @@ import {
   setFlag,
   setQuestion,
   setNormal,
+  updateCell,
   incrementTimer,
 } from "../../store/boardSlice";
 const Td = styled.td`
@@ -98,15 +99,15 @@ export default function BoardSetting() {
     switch (boardData[rowIndex][colIndex]) {
       case CELL.NORMAL:
       case CELL.MINE:
-        dispatch(setFlag({ rowIndex, colIndex }));
+        dispatch(updateCell({ rowIndex, colIndex, updateType: "setFlag" }));
         break;
       case CELL.FLAG:
       case CELL.FLAG_MINE:
-        dispatch(setQuestion({ rowIndex, colIndex }));
+        dispatch(updateCell({ rowIndex, colIndex, updateType: "setQuestion" }));
         break;
       case CELL.QUESTION:
       case CELL.QUESTION_MINE:
-        dispatch(setNormal({ rowIndex, colIndex }));
+        dispatch(updateCell({ rowIndex, colIndex, updateType: "setNormal" }));
         break;
       default:
         return;

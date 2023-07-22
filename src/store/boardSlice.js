@@ -1,7 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit'
-import { createMine } from '../utils/createMine';
-import { CELL } from '../constant/constant';
-import { checkAround } from '../utils/checkAround';
+import { createSlice } from "@reduxjs/toolkit";
+import { createMine } from "../utils/createMine";
+import { CELL } from "../constant/constant";
+import { checkAround } from "../utils/checkAround";
 
 const initialState = {
   boardData: [],
@@ -14,10 +14,10 @@ const initialState = {
   openedCount: 0,
   result: "",
   timer: 0,
-}
+};
 
 export const boardSlice = createSlice({
-  name: 'board',
+  name: "board",
   initialState,
   reducers: {
     startGame: (state, action) => {
@@ -38,12 +38,20 @@ export const boardSlice = createSlice({
       boardData.forEach((row, i) => {
         boardData[i] = [...state.boardData[i]];
       });
-      const checkAroundResult = checkAround(boardData,rowIndex, colIndex, state.openedCount, CELL, state.data.mine, state.timer);
+      const checkAroundResult = checkAround(
+        boardData,
+        rowIndex,
+        colIndex,
+        state.openedCount,
+        CELL,
+        state.data.mine,
+        state.timer
+      );
       state.boardData = checkAroundResult.boardData;
       state.openedCount += checkAroundResult.openedCount;
-      if(checkAroundResult.stop) {
+      if (checkAroundResult.stop) {
         state.stop = true;
-        state.result = `${state.timer}초만에 승리하셨습니다!`
+        state.result = `${state.timer}초만에 승리하셨습니다!`;
       }
     },
     clickedMine: (state, action) => {
@@ -52,38 +60,39 @@ export const boardSlice = createSlice({
       boardData[rowIndex][colIndex] = CELL.CLICKED_MINE;
       state.stop = true;
     },
-    setFlag: (state, action) => {
-      const { rowIndex, colIndex } = action.payload;
+    updateCell: (state, action) => {
+      const { rowIndex, colIndex, updateType } = action.payload;
       const boardData = [...state.boardData];
-      if(boardData[rowIndex][colIndex] === CELL.MINE) {
-        boardData[rowIndex][colIndex] = CELL.FLAG_MINE;
-      }else {
-        boardData[rowIndex][colIndex] = CELL.FLAG;
+      switch (updateType) {
+        case "setFlag":
+          boardData[rowIndex][colIndex] =
+            boardData[rowIndex][colIndex] === CELL.MINE
+              ? CELL.FLAG_MINE
+              : CELL.FLAG;
+          break;
+        case "setQuestion":
+          boardData[rowIndex][colIndex] =
+            boardData[rowIndex][colIndex] === CELL.FLAG_MINE
+              ? CELL.QUESTION_MINE
+              : CELL.QUESTION;
+          break;
+        case "setNormal":
+          boardData[rowIndex][colIndex] =
+            boardData[rowIndex][colIndex] === CELL.QUESTION_MINE
+              ? CELL.MINE
+              : CELL.NORMAL;
+          break;
+        default:
+          break;
       }
-    },
-    setQuestion: (state, action) => {
-      const { rowIndex, colIndex } = action.payload;
-      const boardData = [...state.boardData];
-      if(boardData[rowIndex][colIndex] === CELL.FLAG_MINE) {
-        boardData[rowIndex][colIndex] = CELL.QUESTION_MINE;
-      }else {
-        boardData[rowIndex][colIndex] = CELL.QUESTION;
-      }
-    },
-    setNormal: (state, action) => {
-      const { rowIndex, colIndex } = action.payload;
-      const boardData = [...state.boardData];
-      if(boardData[rowIndex][colIndex] === CELL.QUESTION_MINE) {
-        boardData[rowIndex][colIndex] = CELL.MINE;
-      }else {
-        boardData[rowIndex][colIndex] = CELL.NORMAL;
-      }
+      state.boardData = boardData;
     },
     incrementTimer: (state) => {
       state.timer += 1;
     },
   },
-})
+});
 
-export const { startGame, openCell, clickedMine, setFlag, setQuestion, setNormal, incrementTimer } = boardSlice.actions;
+export const { startGame, openCell, clickedMine, updateCell, incrementTimer } =
+  boardSlice.actions;
 export default boardSlice.reducer;
