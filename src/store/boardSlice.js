@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { createMine } from '../utils/createMine';
 import { CELL } from '../constant/constant';
+import { checkAround } from '../utils/checkAround';
 
 const initialState = {
   boardData: [],
@@ -29,6 +30,7 @@ export const boardSlice = createSlice({
       state.stop = false;
       state.openedCount = 0;
       state.timer = 0;
+      state.result = "";
     },
     openCell: (state, action) => {
       const { rowIndex, colIndex } = action.payload;
@@ -36,89 +38,13 @@ export const boardSlice = createSlice({
       boardData.forEach((row, i) => {
         boardData[i] = [...state.boardData[i]];
       });
-      const checked = [];
-      let openedCount = 0;
-      const checkAround = (rowIndex, colIndex) => {
-        console.log(rowIndex, colIndex);
-        if (
-          [CELL.OPENED, CELL.FLAG_MINE, CELL.FLAG, CELL.QUESTION_MINE, CELL.QUESTION].includes(
-            boardData[rowIndex][colIndex]
-          )
-        ) {
-          return;
-        }
-        if (
-          rowIndex < 0 ||
-          rowIndex >= boardData.length ||
-          colIndex < 0 ||
-          colIndex >= boardData[0].length
-        ) {
-          return;
-        }
-        if (checked.includes(rowIndex + "/" + colIndex)) {
-          return;
-        } else {
-          checked.push(rowIndex + "/" + colIndex);
-        }
-        let around = [];
-        if (boardData[rowIndex - 1]) {
-          around = around.concat(
-            boardData[rowIndex - 1][colIndex - 1],
-            boardData[rowIndex - 1][colIndex],
-            boardData[rowIndex - 1][colIndex + 1]
-          );
-        }
-        around = around.concat(
-          boardData[rowIndex][colIndex - 1],
-          boardData[rowIndex][colIndex + 1]
-        );
-        if (boardData[rowIndex + 1]) {
-          around = around.concat(
-            boardData[rowIndex + 1][colIndex - 1],
-            boardData[rowIndex + 1][colIndex],
-            boardData[rowIndex + 1][colIndex + 1]
-          );
-        }
-        const count = around.filter((value) =>
-          [CELL.MINE, CELL.FLAG_MINE, CELL.QUESTION_MINE].includes(value)
-        ).length;
-        if (count === 0) {
-          const near = [];
-          if (rowIndex - 1 > -1) {
-            near.push([rowIndex - 1, colIndex - 1]);
-            near.push([rowIndex - 1, colIndex]);
-            near.push([rowIndex - 1, colIndex + 1]);
-          }
-          near.push([rowIndex, colIndex - 1]);
-          near.push([rowIndex, colIndex + 1]);
-          if (rowIndex + 1 < boardData.length) {
-            near.push([rowIndex + 1, colIndex - 1]);
-            near.push([rowIndex + 1, colIndex]);
-            near.push([rowIndex + 1, colIndex + 1]);
-          }
-          near.forEach((n) => {
-            if (boardData[n[0]][n[1]] !== CELL.OPENED) {
-              checkAround(n[0], n[1]);
-            }
-          });
-        }
-        // 이미 열린 셀에 대한 카운트 증가 방지
-        if (boardData[rowIndex][colIndex] === CELL.NORMAL) { 
-          openedCount += 1;
-        }
-        boardData[rowIndex][colIndex] = count;
-      };
-      checkAround(rowIndex, colIndex);
-      let stop = false;
-      let result = "";
-      if(state.data.row * state.data.col - state.data.mine === state.openedCount + openedCount) {
-        stop = true;
-        result = `${state.timer}초만에 승리하셨습니다!`;
+      const checkAroundResult = checkAround(boardData,rowIndex, colIndex, state.openedCount, CELL, state.data.mine, state.timer);
+      state.boardData = checkAroundResult.boardData;
+      state.openedCount += checkAroundResult.openedCount;
+      if(checkAroundResult.stop) {
+        state.stop = true;
+        state.result = `${state.timer}초만에 승리하셨습니다!`
       }
-      state.boardData = boardData;
-      state.stop = stop;
-      state.result = result;
-      state.openedCount += openedCount;
     },
     clickedMine: (state, action) => {
       const { rowIndex, colIndex } = action.payload;
