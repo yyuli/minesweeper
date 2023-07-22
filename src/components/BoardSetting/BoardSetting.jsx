@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { createMine } from "../../utils/createMine";
 import { CELL } from "../../constant/constant";
+import { useSelector, useDispatch } from "react-redux";
+import { startGame } from "../../store/boardSlice";
 const Td = styled.td`
   width: 40px;
   height: 40px;
@@ -11,7 +13,9 @@ export default function BoardSetting() {
   const [row, setRow] = useState(10);
   const [col, setCol] = useState(10);
   const [mine, setMine] = useState(20);
-  const [boardData, setBoardData] = useState([]);
+  const boardData = useSelector((state) => state.board.boardData);
+  console.log(boardData);
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -41,20 +45,21 @@ export default function BoardSetting() {
       />
       <button
         onClick={() => {
-          setBoardData(createMine(row, col, mine));
+          dispatch(startGame({ row, col, mine }));
         }}
       >
         시작
       </button>
       <table>
         <tbody>
-          {boardData.map((row, rowIndex) => (
-            <tr key={rowIndex}>
-              {row.map((col, colIndex) => (
-                <Td key={colIndex}>{col === CELL.MINE ? "-7" : "-1"}</Td>
-              ))}
-            </tr>
-          ))}
+          {boardData.length > 0 &&
+            boardData.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {row.map((col, colIndex) => (
+                  <Td key={colIndex}>{col === CELL.MINE ? "-7" : "-1"}</Td>
+                ))}
+              </tr>
+            ))}
         </tbody>
       </table>
     </>
