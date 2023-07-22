@@ -2,7 +2,14 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { CELL } from "../../constant/constant";
 import { useSelector, useDispatch } from "react-redux";
-import { startGame, openCell, clickedMine } from "../../store/boardSlice";
+import {
+  startGame,
+  openCell,
+  clickedMine,
+  setFlag,
+  setQuestion,
+  setNormal,
+} from "../../store/boardSlice";
 const Td = styled.td`
   width: 40px;
   height: 40px;
@@ -25,6 +32,8 @@ export default function BoardSetting() {
   const [col, setCol] = useState(10);
   const [mine, setMine] = useState(20);
   const boardData = useSelector((state) => state.board.boardData);
+  const stopGame = useSelector((state) => state.board.stop);
+  console.log(stopGame);
   const dispatch = useDispatch();
   console.log(boardData);
 
@@ -48,19 +57,41 @@ export default function BoardSetting() {
   };
 
   const onLeftClick = (rowIndex, colIndex) => {
+    if (stopGame) return;
     switch (boardData[rowIndex][colIndex]) {
       case CELL.OPENED:
       case CELL.FLAG:
       case CELL.FLAG_MINE:
       case CELL.QUESTION:
       case CELL.QUESTION_MINE:
-        return;
+        break;
       case CELL.NORMAL:
         dispatch(openCell({ rowIndex, colIndex }));
-        return;
+        break;
       case CELL.MINE:
         dispatch(clickedMine({ rowIndex, colIndex }));
+        break;
+      default:
         return;
+    }
+  };
+
+  const onRightClick = (e, rowIndex, colIndex) => {
+    e.preventDefault();
+    if (stopGame) return;
+    switch (boardData[rowIndex][colIndex]) {
+      case CELL.NORMAL:
+      case CELL.MINE:
+        dispatch(setFlag({ rowIndex, colIndex }));
+        break;
+      case CELL.FLAG:
+      case CELL.FLAG_MINE:
+        dispatch(setQuestion({ rowIndex, colIndex }));
+        break;
+      case CELL.QUESTION:
+      case CELL.QUESTION_MINE:
+        dispatch(setNormal({ rowIndex, colIndex }));
+        break;
       default:
         return;
     }
@@ -109,6 +140,7 @@ export default function BoardSetting() {
                     key={colIndex}
                     cellData={col}
                     onClick={() => onLeftClick(rowIndex, colIndex)}
+                    onContextMenu={(e) => onRightClick(e, rowIndex, colIndex)}
                   >
                     {getText(col)}
                   </Td>

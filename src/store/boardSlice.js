@@ -35,10 +35,36 @@ export const boardSlice = createSlice({
       const boardData = [...state.boardData];
       boardData[rowIndex][colIndex] = CELL.CLICKED_MINE;
       state.stop = true;
+    },
+    setFlag: (state, action) => {
+      const { rowIndex, colIndex } = action.payload;
+      const boardData = [...state.boardData];
+      if(boardData[rowIndex][colIndex] === CELL.MINE) {
+        boardData[rowIndex][colIndex] = CELL.FLAG_MINE;
+      }else {
+        boardData[rowIndex][colIndex] = CELL.FLAG;
+      }
+    },
+    setQuestion: (state, action) => {
+      const { rowIndex, colIndex } = action.payload;
+      const boardData = [...state.boardData];
+      if(boardData[rowIndex][colIndex] === CELL.FLAG_MINE) {
+        boardData[rowIndex][colIndex] = CELL.QUESTION_MINE;
+      }else {
+        boardData[rowIndex][colIndex] = CELL.QUESTION;
+      }
+    },
+    setNormal: (state, action) => {
+      const { rowIndex, colIndex } = action.payload;
+      const boardData = [...state.boardData];
+      if(boardData[rowIndex][colIndex] === CELL.QUESTION_MINE) {
+        boardData[rowIndex][colIndex] = CELL.MINE;
+      }else {
+        boardData[rowIndex][colIndex] = CELL.NORMAL;
+      }
     }
   },
 })
 
-export const { startGame, openCell, clickedMine } = boardSlice.actions
-
-export default boardSlice.reducer
+export const { startGame, openCell, clickedMine, setFlag, setQuestion, setNormal } = boardSlice.actions;
+export default boardSlice.reducer;
