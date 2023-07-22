@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { CELL } from "../../constant/constant";
 import { useSelector, useDispatch } from "react-redux";
@@ -9,12 +9,13 @@ import {
   setFlag,
   setQuestion,
   setNormal,
+  incrementTimer,
 } from "../../store/boardSlice";
 const Td = styled.td`
   width: 40px;
   height: 40px;
   border: 1px solid black;
-  color: #fff;
+  /* color: #fff; */
   background-color: ${({ cellData }) => {
     switch (cellData) {
       case 0:
@@ -33,9 +34,24 @@ export default function BoardSetting() {
   const [mine, setMine] = useState(20);
   const boardData = useSelector((state) => state.board.boardData);
   const stopGame = useSelector((state) => state.board.stop);
-  console.log(stopGame);
+  const result = useSelector((state) => state.board.result);
   const dispatch = useDispatch();
   console.log(boardData);
+
+  useEffect(() => {
+    let timer;
+    if (boardData.length > 0 && !stopGame) {
+      timer = setInterval(() => {
+        dispatch(incrementTimer());
+      }, 1000);
+    }
+    return () => {
+      clearInterval(timer);
+    };
+  }, [boardData, stopGame]);
+
+  const time = useSelector((state) => state.board.timer);
+  console.log(time);
 
   const getText = (code) => {
     switch (code) {
@@ -130,6 +146,8 @@ export default function BoardSetting() {
       >
         시작
       </button>
+      {result}
+      {time}
       <table>
         <tbody>
           {boardData.length > 0 &&

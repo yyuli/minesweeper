@@ -12,6 +12,7 @@ const initialState = {
   stop: false,
   openedCount: 0,
   result: "",
+  timer: 0,
 }
 
 export const boardSlice = createSlice({
@@ -27,6 +28,7 @@ export const boardSlice = createSlice({
       state.boardData = [...newBoardData];
       state.stop = false;
       state.openedCount = 0;
+      state.timer = 0;
     },
     openCell: (state, action) => {
       const { rowIndex, colIndex } = action.payload;
@@ -58,10 +60,6 @@ export const boardSlice = createSlice({
         } else {
           checked.push(rowIndex + "/" + colIndex);
         }
-        // 이미 열린 셀에 대한 카운트 증가 방지
-        if (boardData[rowIndex][colIndex] === CELL.NORMAL) { 
-          openedCount += 1;
-        }
         let around = [];
         if (boardData[rowIndex - 1]) {
           around = around.concat(
@@ -84,8 +82,6 @@ export const boardSlice = createSlice({
         const count = around.filter((value) =>
           [CELL.MINE, CELL.FLAG_MINE, CELL.QUESTION_MINE].includes(value)
         ).length;
-        console.log(around, count);
-        boardData[rowIndex][colIndex] = count;
         if (count === 0) {
           const near = [];
           if (rowIndex - 1 > -1) {
@@ -106,13 +102,18 @@ export const boardSlice = createSlice({
             }
           });
         }
+        // 이미 열린 셀에 대한 카운트 증가 방지
+        if (boardData[rowIndex][colIndex] === CELL.NORMAL) { 
+          openedCount += 1;
+        }
+        boardData[rowIndex][colIndex] = count;
       };
       checkAround(rowIndex, colIndex);
       let stop = false;
       let result = "";
       if(state.data.row * state.data.col - state.data.mine === state.openedCount + openedCount) {
         stop = true;
-        result = "승리하셨습니다!";
+        result = `${state.timer}초만에 승리하셨습니다!`;
       }
       state.boardData = boardData;
       state.stop = stop;
@@ -151,9 +152,12 @@ export const boardSlice = createSlice({
       }else {
         boardData[rowIndex][colIndex] = CELL.NORMAL;
       }
-    }
+    },
+    incrementTimer: (state) => {
+      state.timer += 1;
+    },
   },
 })
 
-export const { startGame, openCell, clickedMine, setFlag, setQuestion, setNormal } = boardSlice.actions;
+export const { startGame, openCell, clickedMine, setFlag, setQuestion, setNormal, incrementTimer } = boardSlice.actions;
 export default boardSlice.reducer;
