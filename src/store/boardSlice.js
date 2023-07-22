@@ -10,6 +10,8 @@ const initialState = {
     mine: 0,
   },
   stop: false,
+  openedCount: 0,
+  result: "",
 }
 
 export const boardSlice = createSlice({
@@ -24,6 +26,7 @@ export const boardSlice = createSlice({
       const newBoardData = createMine(row, col, mine);
       state.boardData = [...newBoardData];
       state.stop = false;
+      state.openedCount = 0;
     },
     openCell: (state, action) => {
       const { rowIndex, colIndex } = action.payload;
@@ -32,6 +35,7 @@ export const boardSlice = createSlice({
         boardData[i] = [...state.boardData[i]];
       });
       const checked = [];
+      let openedCount = 0;
       const checkAround = (rowIndex, colIndex) => {
         console.log(rowIndex, colIndex);
         if (
@@ -53,6 +57,10 @@ export const boardSlice = createSlice({
           return;
         } else {
           checked.push(rowIndex + "/" + colIndex);
+        }
+        // 이미 열린 셀에 대한 카운트 증가 방지
+        if (boardData[rowIndex][colIndex] === CELL.NORMAL) { 
+          openedCount += 1;
         }
         let around = [];
         if (boardData[rowIndex - 1]) {
@@ -100,7 +108,16 @@ export const boardSlice = createSlice({
         }
       };
       checkAround(rowIndex, colIndex);
+      let stop = false;
+      let result = "";
+      if(state.data.row * state.data.col - state.data.mine === state.openedCount + openedCount) {
+        stop = true;
+        result = "승리하셨습니다!";
+      }
       state.boardData = boardData;
+      state.stop = stop;
+      state.result = result;
+      state.openedCount += openedCount;
     },
     clickedMine: (state, action) => {
       const { rowIndex, colIndex } = action.payload;
