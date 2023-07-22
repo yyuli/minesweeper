@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-
+import styled from "styled-components";
+const Td = styled.td`
+  width: 40px;
+  height: 40px;
+  border: 1px solid black;
+`;
 export default function Setting() {
   const [row, setRow] = useState(10);
   const [col, setCol] = useState(10);
   const [mine, setMine] = useState(20);
-
+  const [boardData, setBoardData] = useState([]);
   const CELL = {
     NORMAL: -1,
     QUESTION: -2,
@@ -24,10 +29,10 @@ export default function Setting() {
       const mine = board.splice(Math.floor(Math.random() * board.length), 1)[0];
       mineArr.push(mine);
     }
-    const boardData = [];
+    const data = [];
     for (let i = 0; i < row; i++) {
       const rowData = [];
-      boardData.push(rowData);
+      data.push(rowData);
       for (let j = 0; j < col; j++) {
         rowData.push(CELL.NORMAL);
       }
@@ -35,13 +40,14 @@ export default function Setting() {
     for (let k = 0; k < mineArr.length; k++) {
       const ver = Math.floor(mineArr[k] / col);
       const hor = mineArr[k] % col;
-      boardData[ver][hor] = CELL.MINE;
+      data[ver][hor] = CELL.MINE;
     }
-    console.log(boardData);
+    setBoardData(data);
   };
+  console.log(boardData);
 
   return (
-    <div>
+    <>
       <input
         type="number"
         placeholder="세로"
@@ -67,6 +73,21 @@ export default function Setting() {
         }}
       />
       <button onClick={createMine}>시작</button>
-    </div>
+      <table>
+        <tbody>
+          {boardData.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {row.map((col, colIndex) =>
+                col === CELL.MINE ? (
+                  <Td key={colIndex}>-7</Td>
+                ) : (
+                  <Td key={colIndex}>-1</Td>
+                )
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
   );
 }
