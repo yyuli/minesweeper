@@ -22,7 +22,7 @@ const Td = styled.td`
         return "#fff";
       case -1:
       case -7:
-        return "#000";
+        return "#eee";
       default:
         return "#fff";
     }
@@ -35,12 +35,12 @@ export default function BoardSetting() {
   const boardData = useSelector((state) => state.board.boardData);
   const stopGame = useSelector((state) => state.board.stop);
   const result = useSelector((state) => state.board.result);
+  const [gameStart, setGameStart] = useState(false);
   const dispatch = useDispatch();
-  console.log(boardData);
 
   useEffect(() => {
     let timer;
-    if (boardData.length > 0 && !stopGame) {
+    if (gameStart && !stopGame) {
       timer = setInterval(() => {
         dispatch(incrementTimer());
       }, 1000);
@@ -48,7 +48,7 @@ export default function BoardSetting() {
     return () => {
       clearInterval(timer);
     };
-  }, [boardData, stopGame]);
+  }, [gameStart, stopGame]);
 
   const time = useSelector((state) => state.board.timer);
   console.log(time);
@@ -142,6 +142,7 @@ export default function BoardSetting() {
       <button
         onClick={() => {
           dispatch(startGame({ row, col, mine }));
+          setGameStart(true);
         }}
       >
         시작
