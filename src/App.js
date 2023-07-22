@@ -1,8 +1,10 @@
+import BoardSetting from "./components/BoardSetting/BoardSetting";
+
 function App() {
   return (
-    <div>
-      hello world
-    </div>
+    <>
+      <BoardSetting/>
+    </>
   );
 }
 export default App;
