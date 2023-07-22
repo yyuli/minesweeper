@@ -28,7 +28,79 @@ export const boardSlice = createSlice({
     openCell: (state, action) => {
       const { rowIndex, colIndex } = action.payload;
       const boardData = [...state.boardData];
-      boardData[rowIndex][colIndex] = CELL.OPENED;
+      boardData.forEach((row, i) => {
+        boardData[i] = [...state.boardData[i]];
+      });
+      const checked = [];
+      const checkAround = (rowIndex, colIndex) => {
+        console.log(rowIndex, colIndex);
+        if (
+          [CELL.OPENED, CELL.FLAG_MINE, CELL.FLAG, CELL.QUESTION_MINE, CELL.QUESTION].includes(
+            boardData[rowIndex][colIndex]
+          )
+        ) {
+          return;
+        }
+        if (
+          rowIndex < 0 ||
+          rowIndex >= boardData.length ||
+          colIndex < 0 ||
+          colIndex >= boardData[0].length
+        ) {
+          return;
+        }
+        if (checked.includes(rowIndex + "/" + colIndex)) {
+          return;
+        } else {
+          checked.push(rowIndex + "/" + colIndex);
+        }
+        let around = [];
+        if (boardData[rowIndex - 1]) {
+          around = around.concat(
+            boardData[rowIndex - 1][colIndex - 1],
+            boardData[rowIndex - 1][colIndex],
+            boardData[rowIndex - 1][colIndex + 1]
+          );
+        }
+        around = around.concat(
+          boardData[rowIndex][colIndex - 1],
+          boardData[rowIndex][colIndex + 1]
+        );
+        if (boardData[rowIndex + 1]) {
+          around = around.concat(
+            boardData[rowIndex + 1][colIndex - 1],
+            boardData[rowIndex + 1][colIndex],
+            boardData[rowIndex + 1][colIndex + 1]
+          );
+        }
+        const count = around.filter((value) =>
+          [CELL.MINE, CELL.FLAG_MINE, CELL.QUESTION_MINE].includes(value)
+        ).length;
+        console.log(around, count);
+        boardData[rowIndex][colIndex] = count;
+        if (count === 0) {
+          const near = [];
+          if (rowIndex - 1 > -1) {
+            near.push([rowIndex - 1, colIndex - 1]);
+            near.push([rowIndex - 1, colIndex]);
+            near.push([rowIndex - 1, colIndex + 1]);
+          }
+          near.push([rowIndex, colIndex - 1]);
+          near.push([rowIndex, colIndex + 1]);
+          if (rowIndex + 1 < boardData.length) {
+            near.push([rowIndex + 1, colIndex - 1]);
+            near.push([rowIndex + 1, colIndex]);
+            near.push([rowIndex + 1, colIndex + 1]);
+          }
+          near.forEach((n) => {
+            if (boardData[n[0]][n[1]] !== CELL.OPENED) {
+              checkAround(n[0], n[1]);
+            }
+          });
+        }
+      };
+      checkAround(rowIndex, colIndex);
+      state.boardData = boardData;
     },
     clickedMine: (state, action) => {
       const { rowIndex, colIndex } = action.payload;
