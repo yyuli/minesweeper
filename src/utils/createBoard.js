@@ -9,6 +9,5 @@ export const createBoard = (row, col) => {
         rowData.push(CELL.NORMAL);
       }
     }
-    console.log(boardData);
     return boardData;
   };
