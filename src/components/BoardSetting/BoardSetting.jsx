@@ -4,11 +4,15 @@ import { CELL } from "../../constant/constant";
 import { useSelector, useDispatch } from "react-redux";
 import {
   startGame,
+  updateBoard,
   openCell,
   clickedMine,
   updateCell,
   incrementTimer,
 } from "../../store/boardSlice";
+import { createMine } from "../../utils/createMine";
+import { plantMine } from "../../utils/plantMine";
+
 const Td = styled.td`
   width: 40px;
   height: 40px;
@@ -71,8 +75,12 @@ export default function BoardSetting() {
 
   const onLeftClick = (rowIndex, colIndex) => {
     if (!gameStart) {
-      const firstClick = rowIndex * col + colIndex;
-      dispatch(startGame({ row, col, mine, firstClick }));
+      dispatch(startGame({ row, col, mine }));
+      const currentPosition = rowIndex * col + colIndex;
+      console.log(currentPosition);
+      const minePositionArr = createMine(row, col, mine, currentPosition);
+      const newBoard = plantMine(col, minePositionArr, boardData);
+      dispatch(updateBoard(newBoard));
       setGameStart(true);
     }
     if (stopGame) return;
@@ -115,6 +123,26 @@ export default function BoardSetting() {
     }
   };
 
+  useEffect(() => {
+    dispatch(
+      startGame({
+        row,
+        col,
+        mine,
+      })
+    );
+  }, [row, col]);
+  const initializeGame = () => {
+    dispatch(
+      startGame({
+        row,
+        col,
+        mine,
+      })
+    );
+    setGameStart(false);
+  };
+
   return (
     <>
       <input
@@ -143,36 +171,35 @@ export default function BoardSetting() {
       />
       <button
         onClick={() => {
-          dispatch(startGame({ row: 8, col: 8, mine: 10 }));
-          setGameStart(true);
+          setRow(8);
+          setCol(8);
+          setMine(10);
+          initializeGame();
         }}
       >
         Beginner
       </button>
       <button
         onClick={() => {
-          dispatch(startGame({ row: 16, col: 16, mine: 40 }));
-          setGameStart(true);
+          setRow(16);
+          setCol(16);
+          setMine(40);
+          initializeGame();
         }}
       >
         Intermediate
       </button>
       <button
         onClick={() => {
-          dispatch(startGame({ row: 16, col: 32, mine: 99 }));
-          setGameStart(true);
+          setRow(16);
+          setCol(32);
+          setMine(99);
+          initializeGame();
         }}
       >
         Expert
       </button>
-      <button
-        onClick={() => {
-          dispatch(startGame({ row, col, mine }));
-          setGameStart(true);
-        }}
-      >
-        Custom
-      </button>
+      <button onClick={initializeGame}>Custom</button>
       {result}
       {time}
       <table>
@@ -184,7 +211,7 @@ export default function BoardSetting() {
                   <Td
                     key={colIndex}
                     cellData={col}
-                    onClick={() => onLeftClick(rowIndex, colIndex)}
+                    onClick={() => onLeftClick(rowIndex, colIndex, col)}
                     onContextMenu={(e) => onRightClick(e, rowIndex, colIndex)}
                   >
                     {getText(col)}
