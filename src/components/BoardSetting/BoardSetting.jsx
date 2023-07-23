@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import styled from "styled-components";
 import { CELL } from "../../constant/constant";
 import { useSelector, useDispatch } from "react-redux";
@@ -9,6 +9,7 @@ import {
   clickedMine,
   updateCell,
   incrementTimer,
+  openCellAsync,
 } from "../../store/boardSlice";
 import { createMine } from "../../utils/createMine";
 import { plantMine } from "../../utils/plantMine";
@@ -30,7 +31,7 @@ const Td = styled.td`
     }
   }};
 `;
-export default function BoardSetting() {
+const BoardSetting = memo(function BoardSetting() {
   const [row, setRow] = useState(8);
   const [col, setCol] = useState(8);
   const [mine, setMine] = useState(10);
@@ -91,7 +92,8 @@ export default function BoardSetting() {
       case CELL.QUESTION_MINE:
         break;
       case CELL.NORMAL:
-        dispatch(openCell({ rowIndex, colIndex }));
+        // dispatch(openCell({ rowIndex, colIndex }));
+        dispatch(openCellAsync({ rowIndex, colIndex }));
         break;
       case CELL.MINE:
         dispatch(clickedMine({ rowIndex, colIndex, row, col }));
@@ -225,4 +227,6 @@ export default function BoardSetting() {
       </table>
     </>
   );
-}
+});
+
+export default BoardSetting;
