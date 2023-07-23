@@ -58,9 +58,18 @@ export const boardSlice = createSlice({
       }
     },
     clickedMine: (state, action) => {
-      const { rowIndex, colIndex } = action.payload;
+      const { rowIndex, colIndex, row, col } = action.payload;
       const boardData = [...state.boardData];
       boardData[rowIndex][colIndex] = CELL.CLICKED_MINE;
+
+      for (let i = 0; i < row; i++) {
+        for (let j = 0; j < col; j++) {
+          if (boardData[i][j] === CELL.MINE) {
+            boardData[i][j] = CELL.CLICKED_MINE;
+          }
+        }
+      }
+      state.boardData = boardData;
       state.stop = true;
     },
     updateCell: (state, action) => {
@@ -96,6 +105,12 @@ export const boardSlice = createSlice({
   },
 });
 
-export const { startGame, updateBoard, openCell, clickedMine, updateCell, incrementTimer } =
-  boardSlice.actions;
+export const {
+  startGame,
+  updateBoard,
+  openCell,
+  clickedMine,
+  updateCell,
+  incrementTimer,
+} = boardSlice.actions;
 export default boardSlice.reducer;

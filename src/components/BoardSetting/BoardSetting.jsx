@@ -94,7 +94,7 @@ export default function BoardSetting() {
         dispatch(openCell({ rowIndex, colIndex }));
         break;
       case CELL.MINE:
-        dispatch(clickedMine({ rowIndex, colIndex }));
+        dispatch(clickedMine({ rowIndex, colIndex, row, col }));
         break;
       default:
         return;
