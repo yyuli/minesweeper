@@ -77,7 +77,6 @@ export default function BoardSetting() {
     if (!gameStart) {
       dispatch(startGame({ row, col, mine }));
       const currentPosition = rowIndex * col + colIndex;
-      console.log(currentPosition);
       const minePositionArr = createMine(row, col, mine, currentPosition);
       const newBoard = plantMine(col, minePositionArr, boardData);
       dispatch(updateBoard(newBoard));
@@ -151,6 +150,7 @@ export default function BoardSetting() {
         value={row}
         onChange={(e) => {
           setRow(e.target.value);
+          setGameStart(false);
         }}
       />
       <input
@@ -159,6 +159,7 @@ export default function BoardSetting() {
         value={col}
         onChange={(e) => {
           setCol(e.target.value);
+          setGameStart(false);
         }}
       />
       <input
@@ -167,6 +168,7 @@ export default function BoardSetting() {
         value={mine}
         onChange={(e) => {
           setMine(e.target.value);
+          setGameStart(false);
         }}
       />
       <button
