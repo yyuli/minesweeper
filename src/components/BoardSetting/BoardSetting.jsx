@@ -6,9 +6,6 @@ import {
   startGame,
   openCell,
   clickedMine,
-  setFlag,
-  setQuestion,
-  setNormal,
   updateCell,
   incrementTimer,
 } from "../../store/boardSlice";
@@ -30,9 +27,9 @@ const Td = styled.td`
   }};
 `;
 export default function BoardSetting() {
-  const [row, setRow] = useState(10);
-  const [col, setCol] = useState(10);
-  const [mine, setMine] = useState(20);
+  const [row, setRow] = useState(8);
+  const [col, setCol] = useState(8);
+  const [mine, setMine] = useState(10);
   const boardData = useSelector((state) => state.board.boardData);
   const stopGame = useSelector((state) => state.board.stop);
   const result = useSelector((state) => state.board.result);
@@ -52,7 +49,6 @@ export default function BoardSetting() {
   }, [gameStart, stopGame]);
 
   const time = useSelector((state) => state.board.timer);
-  console.log(time);
 
   const getText = (code) => {
     switch (code) {
@@ -74,6 +70,11 @@ export default function BoardSetting() {
   };
 
   const onLeftClick = (rowIndex, colIndex) => {
+    if (!gameStart) {
+      const firstClick = rowIndex * col + colIndex;
+      dispatch(startGame({ row, col, mine, firstClick }));
+      setGameStart(true);
+    }
     if (stopGame) return;
     switch (boardData[rowIndex][colIndex]) {
       case CELL.OPENED:
@@ -142,11 +143,35 @@ export default function BoardSetting() {
       />
       <button
         onClick={() => {
+          dispatch(startGame({ row: 8, col: 8, mine: 10 }));
+          setGameStart(true);
+        }}
+      >
+        Beginner
+      </button>
+      <button
+        onClick={() => {
+          dispatch(startGame({ row: 16, col: 16, mine: 40 }));
+          setGameStart(true);
+        }}
+      >
+        Intermediate
+      </button>
+      <button
+        onClick={() => {
+          dispatch(startGame({ row: 16, col: 32, mine: 99 }));
+          setGameStart(true);
+        }}
+      >
+        Expert
+      </button>
+      <button
+        onClick={() => {
           dispatch(startGame({ row, col, mine }));
           setGameStart(true);
         }}
       >
-        시작
+        Custom
       </button>
       {result}
       {time}
