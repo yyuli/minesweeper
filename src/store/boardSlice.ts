@@ -3,7 +3,21 @@ import { CELL } from "../constant/constant";
 import { checkAround } from "../utils/checkAround";
 import { createBoard } from "../utils/createBoard";
 
-const initialState = {
+interface BoardState {
+  boardData: number[][];
+  data: {
+    row: number;
+    col: number;
+    mine: number;
+  };
+  stop: boolean;
+  openedCount: number;
+  result: string;
+  timer: number;
+  status: boolean;
+}
+
+const initialState: BoardState = {
   boardData: [],
   data: {
     row: 8,
@@ -17,13 +31,20 @@ const initialState = {
   status: false,
 };
 
+// interface OpenCellPayload {
+//   rowIndex: number;
+//   colIndex: number;
+// }
+
 export const openCellAsync = createAsyncThunk(
   "board/openCellAsync",
-  async (payload, { getState }) => {
+  async (payload: { rowIndex: number; colIndex: number }, { getState }) => {
     const { rowIndex, colIndex } = payload;
-    const { boardData, openedCount, data } = getState().board;
+    const { boardData, openedCount, data } = (
+      getState() as { board: BoardState }
+    ).board;
     const newBoardData = [...boardData];
-    newBoardData.forEach((row, i) => {
+    newBoardData.forEach((_, i) => {
       newBoardData[i] = [...boardData[i]];
     });
     const checkAroundResult = checkAround(
@@ -31,7 +52,7 @@ export const openCellAsync = createAsyncThunk(
       rowIndex,
       colIndex,
       openedCount,
-      data.mine,
+      data.mine
     );
     return checkAroundResult;
   }
@@ -129,7 +150,6 @@ export const boardSlice = createSlice({
 export const {
   startGame,
   updateBoard,
-  openCell,
   clickedMine,
   updateCell,
   incrementTimer,

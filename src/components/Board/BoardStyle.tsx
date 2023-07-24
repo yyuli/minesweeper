@@ -1,6 +1,10 @@
 import styled from "styled-components";
 import { CELL } from "../../constant/constant";
 
+interface BoardTdProps extends React.ComponentPropsWithoutRef<"td"> {
+  data: number;
+}
+
 const BoardWrap = styled.div`
   position: relative;
   background-color: #ffa05d;
@@ -14,13 +18,13 @@ const BoardTable = styled.table`
   border-collapse: separate;
   border-spacing: 4px;
 `;
-const BoardTd = styled.td`
+const BoardTd = styled.td<BoardTdProps>`
   position: relative;
   width: 42px;
   height: 42px;
   border-radius: 4px;
-  background-color: ${({ cellData }) => {
-    switch (cellData) {
+  background-color: ${({ data }) => {
+    switch (data) {
       case CELL.OPENED:
         return "#fff3ac";
       case CELL.NORMAL:

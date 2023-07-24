@@ -16,12 +16,13 @@ import {
   SettingBtn,
   SettingTimeP,
 } from "./SettingStyle";
+import { RootState } from "../../store/store";
 
 export default function Setting() {
-  const row = useSelector((state) => state.board.data.row);
-  const col = useSelector((state) => state.board.data.col);
-  const mine = useSelector((state) => state.board.data.mine);
-  const time = useSelector((state) => state.board.timer);
+  const row = useSelector((state: RootState) => state.board.data.row);
+  const col = useSelector((state: RootState) => state.board.data.col);
+  const mine = useSelector((state: RootState) => state.board.data.mine);
+  const time = useSelector((state: RootState) => state.board.timer);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(
@@ -32,7 +33,7 @@ export default function Setting() {
       })
     );
   }, [row, col]);
-  const initializeGame = (newRow, newCol, newMine) => {
+  const initializeGame = (newRow: number, newCol: number, newMine: number) => {
     dispatch(updateRow(newRow));
     dispatch(updateCol(newCol));
     dispatch(updateMine(newMine));

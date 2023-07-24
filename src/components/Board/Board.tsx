@@ -19,18 +19,19 @@ import {
   BoardText,
   BoardResultP,
 } from "./BoardStyle";
+import { RootState } from "../../store/store";
 
 export default function Board() {
   const dispatch = useDispatch();
-  const row = useSelector((state) => state.board.data.row);
-  const col = useSelector((state) => state.board.data.col);
-  const mine = useSelector((state) => state.board.data.mine);
-  const boardData = useSelector((state) => state.board.boardData);
-  const stopGame = useSelector((state) => state.board.stop);
-  const result = useSelector((state) => state.board.result);
-  const status = useSelector((state) => state.board.status);
+  const row = useSelector((state: RootState) => state.board.data.row);
+  const col = useSelector((state: RootState) => state.board.data.col);
+  const mine = useSelector((state: RootState) => state.board.data.mine);
+  const boardData = useSelector((state: RootState) => state.board.boardData);
+  const stopGame = useSelector((state: RootState) => state.board.stop);
+  const result = useSelector((state: RootState) => state.board.result);
+  const status = useSelector((state: RootState) => state.board.status);
 
-  const getText = (code) => {
+  const getText = (code: number) => {
     switch (code) {
       case CELL.NORMAL:
       case CELL.MINE:
@@ -48,7 +49,7 @@ export default function Board() {
     }
   };
   useEffect(() => {
-    let timer;
+    let timer: ReturnType<typeof setInterval> | undefined;
     if (status && !stopGame) {
       timer = setInterval(() => {
         dispatch(incrementTimer());
@@ -59,7 +60,7 @@ export default function Board() {
     };
   }, [status, stopGame]);
 
-  const onLeftClick = (rowIndex, colIndex) => {
+  const onLeftClick = (rowIndex: number, colIndex: number) => {
     if (!status) {
       dispatch(startGame({ row, col, mine }));
       const currentPosition = rowIndex * col + colIndex;
@@ -77,7 +78,7 @@ export default function Board() {
       case CELL.QUESTION_MINE:
         break;
       case CELL.NORMAL:
-        dispatch(openCellAsync({ rowIndex, colIndex }));
+        dispatch(openCellAsync({ rowIndex, colIndex }) as any);
         break;
       case CELL.MINE:
         dispatch(clickedMine({ rowIndex, colIndex, row, col }));
@@ -87,7 +88,11 @@ export default function Board() {
     }
   };
 
-  const onRightClick = (e, rowIndex, colIndex) => {
+  const onRightClick = (
+    e: React.MouseEvent<HTMLTableCellElement>,
+    rowIndex: number,
+    colIndex: number
+  ) => {
     e.preventDefault();
     if (stopGame) return;
     switch (boardData[rowIndex][colIndex]) {
@@ -108,29 +113,27 @@ export default function Board() {
     }
   };
   return (
-    <>
-      <BoardWrap>
-        <BoardTable>
-          <tbody>
-            {boardData.length > 0 &&
-              boardData.map((row, rowIndex) => (
-                <tr key={rowIndex}>
-                  {row.map((col, colIndex) => (
-                    <BoardTd
-                      key={colIndex}
-                      cellData={col}
-                      onClick={() => onLeftClick(rowIndex, colIndex)}
-                      onContextMenu={(e) => onRightClick(e, rowIndex, colIndex)}
-                    >
-                      <BoardText>{getText(col)}</BoardText>
-                    </BoardTd>
-                  ))}
-                </tr>
-              ))}
-          </tbody>
-        </BoardTable>
-        {!!result && <BoardResultP>{result}</BoardResultP>}
-      </BoardWrap>
-    </>
+    <BoardWrap>
+      <BoardTable>
+        <tbody>
+          {boardData.length > 0 &&
+            boardData.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {row.map((col, colIndex) => (
+                  <BoardTd
+                    key={colIndex}
+                    onClick={() => onLeftClick(rowIndex, colIndex)}
+                    onContextMenu={(e) => onRightClick(e, rowIndex, colIndex)}
+                    data={col}
+                  >
+                    <BoardText>{getText(col)}</BoardText>
+                  </BoardTd>
+                ))}
+              </tr>
+            ))}
+        </tbody>
+      </BoardTable>
+      {!!result && <BoardResultP>{result}</BoardResultP>}
+    </BoardWrap>
   );
 }

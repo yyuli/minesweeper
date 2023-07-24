@@ -1,15 +1,15 @@
 import { CELL } from "../constant/constant";
 
 export const checkAround = (
-  boardData,
-  rowIndex,
-  colIndex,
-  openedCount,
-  mineCount
+  boardData: number[][],
+  rowIndex: number,
+  colIndex: number,
+  openedCount: number,
+  mineCount: number
 ) => {
-  const checked = [];
+  const checked: string[] = [];
   let openedCellCount = 0;
-  const checkAroundCell = (rowIndex, colIndex) => {
+  const checkAroundCell = (rowIndex: number, colIndex: number) => {
     if (
       [
         CELL.OPENED,
@@ -34,7 +34,7 @@ export const checkAround = (
     } else {
       checked.push(rowIndex + "/" + colIndex);
     }
-    let around = [];
+    let around: number[] = [];
     if (boardData[rowIndex - 1]) {
       around = around.concat(
         boardData[rowIndex - 1][colIndex - 1],

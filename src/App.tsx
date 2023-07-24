@@ -5,10 +5,11 @@ import { GlobalStyle } from "./styles/GlobalStyle";
 function App() {
   return (
     <>
-      <GlobalStyle/>
-      <Setting/>
-      <Board/>
+      <GlobalStyle />
+      <Setting />
+      <Board />
     </>
   );
 }
+
 export default App;
