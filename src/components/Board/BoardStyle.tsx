@@ -20,8 +20,8 @@ const BoardTable = styled.table`
 `;
 const BoardTd = styled.td<BoardTdProps>`
   position: relative;
-  width: 42px;
-  height: 42px;
+  width: 32px;
+  height: 32px;
   border-radius: 4px;
   background-color: ${({ data }) => {
     switch (data) {
