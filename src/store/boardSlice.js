@@ -6,14 +6,15 @@ import { createBoard } from "../utils/createBoard";
 const initialState = {
   boardData: [],
   data: {
-    row: 0,
-    col: 0,
-    mine: 0,
+    row: 8,
+    col: 8,
+    mine: 10,
   },
   stop: false,
   openedCount: 0,
   result: "",
   timer: 0,
+  status: false,
 };
 
 export const openCellAsync = createAsyncThunk(
@@ -119,14 +120,24 @@ export const boardSlice = createSlice({
     incrementTimer: (state) => {
       state.timer += 1;
     },
+    setStatus: (state, action) => {
+      state.status = action.payload;
+    },
+    updateRow: (state, action) => {
+      state.data.row = action.payload;
+    },
+    updateCol: (state, action) => {
+      state.data.col = action.payload;
+    },
+    updateMine: (state, action) => {
+      state.data.mine = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(openCellAsync.fulfilled, (state, action) => {
       const { boardData, stop, openedCount } = action.payload;
-      console.log("Inside extraReducers, action.payload:", action.payload);
       state.boardData = boardData;
       state.openedCount += openedCount;
-      console.log("openplz,,,,,,", state.openedCount);
       if (stop) {
         state.stop = true;
         state.result = `${state.timer}초만에 승리하셨습니다!`;
@@ -142,5 +153,9 @@ export const {
   clickedMine,
   updateCell,
   incrementTimer,
+  setStatus,
+  updateRow,
+  updateCol,
+  updateMine,
 } = boardSlice.actions;
 export default boardSlice.reducer;
