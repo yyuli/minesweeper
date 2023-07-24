@@ -1,7 +1,8 @@
-import React, { memo, useEffect, useState } from "react";
-import styled from "styled-components";
+import React, { useEffect, useState } from "react";
 import { CELL } from "../../constant/constant";
 import { useSelector, useDispatch } from "react-redux";
+import { createMine } from "../../utils/createMine";
+import { plantMine } from "../../utils/plantMine";
 import {
   startGame,
   updateBoard,
@@ -10,10 +11,9 @@ import {
   updateCell,
   incrementTimer,
   openCellAsync,
+  setStatus,
 } from "../../store/boardSlice";
-import { createMine } from "../../utils/createMine";
-import { plantMine } from "../../utils/plantMine";
-
+import styled from "styled-components";
 const Td = styled.td`
   width: 40px;
   height: 40px;
@@ -31,29 +31,17 @@ const Td = styled.td`
     }
   }};
 `;
-const BoardSetting = memo(function BoardSetting() {
-  const [row, setRow] = useState(8);
-  const [col, setCol] = useState(8);
-  const [mine, setMine] = useState(10);
+
+export default function Board() {
+  const dispatch = useDispatch();
+  const row = useSelector((state) => state.board.data.row);
+  const col = useSelector((state) => state.board.data.col);
+  const mine = useSelector((state) => state.board.data.mine);
   const boardData = useSelector((state) => state.board.boardData);
   const stopGame = useSelector((state) => state.board.stop);
   const result = useSelector((state) => state.board.result);
-  const [gameStart, setGameStart] = useState(false);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    let timer;
-    if (gameStart && !stopGame) {
-      timer = setInterval(() => {
-        dispatch(incrementTimer());
-      }, 1000);
-    }
-    return () => {
-      clearInterval(timer);
-    };
-  }, [gameStart, stopGame]);
-
   const time = useSelector((state) => state.board.timer);
+  const status = useSelector((state) => state.board.status);
 
   const getText = (code) => {
     switch (code) {
@@ -73,15 +61,26 @@ const BoardSetting = memo(function BoardSetting() {
         return code || "";
     }
   };
+  useEffect(() => {
+    let timer;
+    if (status && !stopGame) {
+      timer = setInterval(() => {
+        dispatch(incrementTimer());
+      }, 1000);
+    }
+    return () => {
+      clearInterval(timer);
+    };
+  }, [status, stopGame]);
 
   const onLeftClick = (rowIndex, colIndex) => {
-    if (!gameStart) {
+    if (!status) {
       dispatch(startGame({ row, col, mine }));
       const currentPosition = rowIndex * col + colIndex;
       const minePositionArr = createMine(row, col, mine, currentPosition);
       const newBoard = plantMine(col, minePositionArr, boardData);
       dispatch(updateBoard(newBoard));
-      setGameStart(true);
+      dispatch(setStatus(true));
     }
     if (stopGame) return;
     switch (boardData[rowIndex][colIndex]) {
@@ -123,89 +122,10 @@ const BoardSetting = memo(function BoardSetting() {
         return;
     }
   };
-
-  useEffect(() => {
-    dispatch(
-      startGame({
-        row,
-        col,
-        mine,
-      })
-    );
-  }, [row, col]);
-  const initializeGame = () => {
-    dispatch(
-      startGame({
-        row,
-        col,
-        mine,
-      })
-    );
-    setGameStart(false);
-  };
-
   return (
     <>
-      <input
-        type="number"
-        placeholder="세로"
-        value={row}
-        onChange={(e) => {
-          setRow(e.target.value);
-          setGameStart(false);
-        }}
-      />
-      <input
-        type="number"
-        placeholder="가로"
-        value={col}
-        onChange={(e) => {
-          setCol(e.target.value);
-          setGameStart(false);
-        }}
-      />
-      <input
-        type="number"
-        placeholder="지뢰"
-        value={mine}
-        onChange={(e) => {
-          setMine(e.target.value);
-          setGameStart(false);
-        }}
-      />
-      <button
-        onClick={() => {
-          setRow(8);
-          setCol(8);
-          setMine(10);
-          initializeGame();
-        }}
-      >
-        Beginner
-      </button>
-      <button
-        onClick={() => {
-          setRow(16);
-          setCol(16);
-          setMine(40);
-          initializeGame();
-        }}
-      >
-        Intermediate
-      </button>
-      <button
-        onClick={() => {
-          setRow(16);
-          setCol(32);
-          setMine(99);
-          initializeGame();
-        }}
-      >
-        Expert
-      </button>
-      <button onClick={initializeGame}>Custom</button>
-      {result}
       {time}
+      {result}
       <table>
         <tbody>
           {boardData.length > 0 &&
@@ -215,7 +135,7 @@ const BoardSetting = memo(function BoardSetting() {
                   <Td
                     key={colIndex}
                     cellData={col}
-                    onClick={() => onLeftClick(rowIndex, colIndex, col)}
+                    onClick={() => onLeftClick(rowIndex, colIndex)}
                     onContextMenu={(e) => onRightClick(e, rowIndex, colIndex)}
                   >
                     {getText(col)}
@@ -227,6 +147,4 @@ const BoardSetting = memo(function BoardSetting() {
       </table>
     </>
   );
-});
-
-export default BoardSetting;
+}

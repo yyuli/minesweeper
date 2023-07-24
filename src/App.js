@@ -1,9 +1,11 @@
-import BoardSetting from "./components/BoardSetting/BoardSetting";
+import Board from "./components/Board/Board";
+import Setting from "./components/Setting/Setting";
 
 function App() {
   return (
     <>
-      <BoardSetting/>
+      <Setting/>
+      <Board/>
     </>
   );
 }
