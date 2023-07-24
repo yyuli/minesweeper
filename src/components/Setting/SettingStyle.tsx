@@ -49,9 +49,10 @@ const SettingTimeP = styled.p`
   color: #7a5237;
   font-size: 18px;
   height: 30px;
+  width: 90px;
+  text-align: right;
   line-height: 30px;
   background: url(${clock}) no-repeat center 4px / 20px 20px;
-  padding-left: 60px;
 `;
 
 export {
