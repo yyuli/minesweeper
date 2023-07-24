@@ -31,11 +31,6 @@ const initialState: BoardState = {
   status: false,
 };
 
-// interface OpenCellPayload {
-//   rowIndex: number;
-//   colIndex: number;
-// }
-
 export const openCellAsync = createAsyncThunk(
   "board/openCellAsync",
   async (payload: { rowIndex: number; colIndex: number }, { getState }) => {

@@ -77,7 +77,6 @@ export const checkAround = (
         }
       });
     }
-    // 이미 열린 셀에 대한 카운트 증가 방지
     if (boardData[rowIndex][colIndex] === CELL.NORMAL) {
       openedCellCount += 1;
     }
