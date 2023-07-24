@@ -1,5 +1,4 @@
 export const createMine = (row, col, mine, currentPosition) => {
-  console.log(row);  
   const minePositionArr = [];
     while (minePositionArr.length < mine) {
       const minePosition = Math.floor(Math.random() * row * col);
@@ -7,6 +6,5 @@ export const createMine = (row, col, mine, currentPosition) => {
         if (minePosition !== currentPosition) minePositionArr.push(minePosition);
       }
     }
-    console.log(minePositionArr);
     return minePositionArr;
   };

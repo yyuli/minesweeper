@@ -7,6 +7,5 @@ export const plantMine = (col, minePositionArr, boardData) => {
     const hor = position % col;
     newBoard[ver][hor] = CELL.MINE;
   });
-  console.log(newBoard);
   return newBoard;
   };

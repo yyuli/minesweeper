@@ -56,26 +56,6 @@ export const boardSlice = createSlice({
     updateBoard: (state, action) => {
       state.boardData = action.payload;
     },
-    // openCell: (state, action) => {
-    //   const { rowIndex, colIndex } = action.payload;
-    //   const boardData = [...state.boardData];
-    //   boardData.forEach((row, i) => {
-    //     boardData[i] = [...state.boardData[i]];
-    //   });
-    //   const checkAroundResult = checkAround(
-    //     boardData,
-    //     rowIndex,
-    //     colIndex,
-    //     state.openedCount,
-    //     state.data.mine,
-    //   );
-    //   state.boardData = checkAroundResult.boardData;
-    //   state.openedCount += checkAroundResult.openedCount;
-    //   if (checkAroundResult.stop) {
-    //     state.stop = true;
-    //     state.result = `${state.timer}초만에 승리하셨습니다!`;
-    //   }
-    // },
     clickedMine: (state, action) => {
       const { rowIndex, colIndex, row, col } = action.payload;
       const boardData = [...state.boardData];
