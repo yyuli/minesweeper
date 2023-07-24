@@ -7,12 +7,21 @@ import {
   updateCol,
   updateMine,
 } from "../../store/boardSlice";
+import {
+  SettingWrap,
+  SettingTitle,
+  SettingInput,
+  SettingBottomWrap,
+  SettingBtnWrap,
+  SettingBtn,
+  SettingTimeP,
+} from "./SettingStyle";
 
 export default function Setting() {
   const row = useSelector((state) => state.board.data.row);
   const col = useSelector((state) => state.board.data.col);
   const mine = useSelector((state) => state.board.data.mine);
-
+  const time = useSelector((state) => state.board.timer);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(
@@ -27,7 +36,6 @@ export default function Setting() {
     dispatch(updateRow(newRow));
     dispatch(updateCol(newCol));
     dispatch(updateMine(newMine));
-
     dispatch(
       startGame({
         row: newRow,
@@ -38,38 +46,56 @@ export default function Setting() {
     dispatch(setStatus(false));
   };
   return (
-    <>
-      <input
-        type="number"
-        placeholder="세로"
-        value={row}
-        onChange={(e) => {
-          dispatch(updateRow(e.target.value));
-          dispatch(setStatus(false));
-        }}
-      />
-      <input
-        type="number"
-        placeholder="가로"
-        value={col}
-        onChange={(e) => {
-          dispatch(updateCol(e.target.value));
-          dispatch(setStatus(false));
-        }}
-      />
-      <input
-        type="number"
-        placeholder="지뢰"
-        value={mine}
-        onChange={(e) => {
-          dispatch(updateMine(e.target.value));
-          dispatch(setStatus(false));
-        }}
-      />
-      <button onClick={() => initializeGame(8, 8, 10)}>Beginner</button>
-      <button onClick={() => initializeGame(16, 16, 40)}>Intermediate</button>
-      <button onClick={() => initializeGame(16, 32, 99)}>Expert</button>
-      <button onClick={() => initializeGame(row, col, mine)}>Custom</button>
-    </>
+    <SettingWrap>
+      <SettingTitle>BOARD SIZE</SettingTitle>
+      <div>
+        <SettingInput
+          type="number"
+          placeholder="세로"
+          value={row}
+          onChange={(e) => {
+            dispatch(updateRow(e.target.value));
+            dispatch(setStatus(false));
+          }}
+        />
+        <SettingInput
+          type="number"
+          placeholder="가로"
+          value={col}
+          onChange={(e) => {
+            dispatch(updateCol(e.target.value));
+            dispatch(setStatus(false));
+          }}
+        />
+        <SettingTitle>MINE</SettingTitle>
+        <SettingInput
+          type="number"
+          placeholder="지뢰"
+          value={mine}
+          onChange={(e) => {
+            dispatch(updateMine(e.target.value));
+            dispatch(setStatus(false));
+          }}
+        />
+      </div>
+      <SettingTitle>LEVEL</SettingTitle>
+      <SettingBottomWrap>
+        <SettingBtnWrap>
+          <SettingBtn onClick={() => initializeGame(8, 8, 10)}>
+            Beginner
+          </SettingBtn>
+          <SettingBtn onClick={() => initializeGame(16, 16, 40)}>
+            Intermediate
+          </SettingBtn>
+          <SettingBtn onClick={() => initializeGame(16, 32, 99)}>
+            Expert
+          </SettingBtn>
+          <SettingBtn onClick={() => initializeGame(row, col, mine)}>
+            Reset
+          </SettingBtn>
+        </SettingBtnWrap>
+        <SettingTimeP>{time}</SettingTimeP>
+      </SettingBottomWrap>
+    </SettingWrap>
   );
 }
