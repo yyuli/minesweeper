@@ -33,7 +33,6 @@ export default function Board() {
   const getText = (code) => {
     switch (code) {
       case CELL.NORMAL:
-        return "";
       case CELL.MINE:
         return "";
       case CELL.CLICKED_MINE:
@@ -130,8 +129,8 @@ export default function Board() {
               ))}
           </tbody>
         </BoardTable>
+        {!!result && <BoardResultP>{result}</BoardResultP>}
       </BoardWrap>
-      <BoardResultP>{result}</BoardResultP>
     </>
   );
 }
