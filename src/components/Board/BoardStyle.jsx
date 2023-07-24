@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { CELL } from "../../constant/constant";
 
 const BoardWrap = styled.div`
+  position: relative;
   background-color: #ffa05d;
   border-radius: 4px;
   display: flex;
@@ -45,7 +46,20 @@ const BoardText = styled.span`
   color: #bb794b;
 `;
 const BoardResultP = styled.p`
-  font-size: 18px;
-  margin-top: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  font-size: 48px;
+  color: #ff6b35;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 export { BoardWrap, BoardTable, BoardTd, BoardText, BoardResultP };

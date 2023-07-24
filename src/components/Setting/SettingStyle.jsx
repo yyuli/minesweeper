@@ -19,6 +19,7 @@ const SettingTitle = styled.h2`
   color: #7a5237;
 `;
 const SettingInput = styled.input`
+  width: 168px;
   color: #7a5237;
   height: 30px;
   font-size: 16px;

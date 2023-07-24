@@ -120,7 +120,7 @@ export const boardSlice = createSlice({
       state.openedCount += openedCount;
       if (stop) {
         state.stop = true;
-        state.result = `${state.timer}초만에 승리하셨습니다!`;
+        state.result = "WIN!";
       }
     });
   },
