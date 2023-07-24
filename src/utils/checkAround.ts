@@ -9,6 +9,7 @@ export const checkAround = (
 ) => {
   const checked: string[] = [];
   let openedCellCount = 0;
+  const buffer: number[][] = [];
   const checkAroundCell = (rowIndex: number, colIndex: number) => {
     if (
       [
@@ -72,7 +73,7 @@ export const checkAround = (
       }
       near.forEach((n) => {
         if (boardData[n[0]][n[1]] !== CELL.OPENED) {
-          checkAroundCell(n[0], n[1]);
+          buffer.push([n[0], n[1]]);
         }
       });
     }
@@ -83,6 +84,10 @@ export const checkAround = (
     boardData[rowIndex][colIndex] = count;
   };
   checkAroundCell(rowIndex, colIndex);
+  while (buffer.length) {
+    let data: number[] = buffer.pop() as number[];
+    checkAroundCell(data[0], data[1]);
+  }
   let stop = false;
   if (
     openedCount + openedCellCount ===
