@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { CELL } from "../../constant/constant";
 import { useSelector, useDispatch } from "react-redux";
 import { createMine } from "../../utils/createMine";
@@ -6,31 +6,19 @@ import { plantMine } from "../../utils/plantMine";
 import {
   startGame,
   updateBoard,
-  openCell,
   clickedMine,
   updateCell,
   incrementTimer,
   openCellAsync,
   setStatus,
 } from "../../store/boardSlice";
-import styled from "styled-components";
-const Td = styled.td`
-  width: 40px;
-  height: 40px;
-  border: 1px solid black;
-  /* color: #fff; */
-  background-color: ${({ cellData }) => {
-    switch (cellData) {
-      case 0:
-        return "#fff";
-      case -1:
-      case -7:
-        return "#eee";
-      default:
-        return "#fff";
-    }
-  }};
-`;
+import {
+  BoardWrap,
+  BoardTable,
+  BoardTd,
+  BoardText,
+  BoardResultP,
+} from "./BoardStyle";
 
 export default function Board() {
   const dispatch = useDispatch();
@@ -40,7 +28,6 @@ export default function Board() {
   const boardData = useSelector((state) => state.board.boardData);
   const stopGame = useSelector((state) => state.board.stop);
   const result = useSelector((state) => state.board.result);
-  const time = useSelector((state) => state.board.timer);
   const status = useSelector((state) => state.board.status);
 
   const getText = (code) => {
@@ -48,7 +35,7 @@ export default function Board() {
       case CELL.NORMAL:
         return "";
       case CELL.MINE:
-        return "X";
+        return "";
       case CELL.CLICKED_MINE:
         return "💣";
       case CELL.FLAG_MINE:
@@ -91,7 +78,6 @@ export default function Board() {
       case CELL.QUESTION_MINE:
         break;
       case CELL.NORMAL:
-        // dispatch(openCell({ rowIndex, colIndex }));
         dispatch(openCellAsync({ rowIndex, colIndex }));
         break;
       case CELL.MINE:
@@ -124,27 +110,28 @@ export default function Board() {
   };
   return (
     <>
-      {time}
-      {result}
-      <table>
-        <tbody>
-          {boardData.length > 0 &&
-            boardData.map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                {row.map((col, colIndex) => (
-                  <Td
-                    key={colIndex}
-                    cellData={col}
-                    onClick={() => onLeftClick(rowIndex, colIndex)}
-                    onContextMenu={(e) => onRightClick(e, rowIndex, colIndex)}
-                  >
-                    {getText(col)}
-                  </Td>
-                ))}
-              </tr>
-            ))}
-        </tbody>
-      </table>
+      <BoardWrap>
+        <BoardTable>
+          <tbody>
+            {boardData.length > 0 &&
+              boardData.map((row, rowIndex) => (
+                <tr key={rowIndex}>
+                  {row.map((col, colIndex) => (
+                    <BoardTd
+                      key={colIndex}
+                      cellData={col}
+                      onClick={() => onLeftClick(rowIndex, colIndex)}
+                      onContextMenu={(e) => onRightClick(e, rowIndex, colIndex)}
+                    >
+                      <BoardText>{getText(col)}</BoardText>
+                    </BoardTd>
+                  ))}
+                </tr>
+              ))}
+          </tbody>
+        </BoardTable>
+      </BoardWrap>
+      <BoardResultP>{result}</BoardResultP>
     </>
   );
 }
