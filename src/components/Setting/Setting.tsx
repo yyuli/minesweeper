@@ -24,6 +24,7 @@ export default function Setting() {
   const mine = useSelector((state: RootState) => state.board.data.mine);
   const time = useSelector((state: RootState) => state.board.timer);
   const dispatch = useDispatch();
+  // row, col이 변경되면 게임판 크기 변경
   useEffect(() => {
     dispatch(
       startGame({
@@ -33,6 +34,7 @@ export default function Setting() {
       })
     );
   }, [row, col]);
+  // 게임을 초기화하는 함수, 새로운 row, col, mine을 입력 받아 게임을 다시 시작
   const initializeGame = (newRow: number, newCol: number, newMine: number) => {
     dispatch(updateRow(newRow));
     dispatch(updateCol(newCol));
