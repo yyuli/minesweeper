@@ -5,10 +5,6 @@ export const store = configureStore({
   reducer: {
     board: boardReducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      thunk: true,
-    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

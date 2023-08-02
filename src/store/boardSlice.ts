@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { CELL } from "../constant/constant";
 import { checkAround } from "../utils/checkAround";
 import { createBoard } from "../utils/createBoard";
@@ -30,29 +30,6 @@ const initialState: BoardState = {
   timer: 0,
   status: false,
 };
-
-export const openCellAsync = createAsyncThunk(
-  "board/openCellAsync",
-  async (payload: { rowIndex: number; colIndex: number }, { getState }) => {
-    const { rowIndex, colIndex } = payload;
-    const { boardData, openedCount, data } = (
-      getState() as { board: BoardState }
-    ).board;
-    const newBoardData = [...boardData];
-    newBoardData.forEach((_, i) => {
-      newBoardData[i] = [...boardData[i]];
-    });
-    const checkAroundResult = checkAround(
-      newBoardData,
-      rowIndex,
-      colIndex,
-      openedCount,
-      data.mine
-    );
-    return checkAroundResult;
-  }
-);
-
 export const boardSlice = createSlice({
   name: "board",
   initialState,
@@ -72,10 +49,31 @@ export const boardSlice = createSlice({
     updateBoard: (state, action) => {
       state.boardData = action.payload;
     },
+    openCell: (state, action) => {
+      const { rowIndex, colIndex } = action.payload;
+      const boardData = [...state.boardData];
+      boardData.forEach((_, i) => {
+        boardData[i] = [...state.boardData[i]];
+      });
+      const checkAroundResult = checkAround(
+        boardData,
+        rowIndex,
+        colIndex,
+        state.openedCount,
+        state.data.mine
+      );
+      state.boardData = checkAroundResult.boardData;
+      state.openedCount += checkAroundResult.openedCount;
+      if (checkAroundResult.stop) {
+        state.stop = true;
+        state.result = "WIN!";
+      }
+    },
     clickedMine: (state, action) => {
       const { rowIndex, colIndex, row, col } = action.payload;
       const boardData = [...state.boardData];
       boardData[rowIndex][colIndex] = CELL.CLICKED_MINE;
+      // 지뢰 클릭 시 모든 지뢰 위치 오픈
       for (let i = 0; i < row; i++) {
         for (let j = 0; j < col; j++) {
           if (boardData[i][j] === CELL.MINE) {
@@ -129,17 +127,6 @@ export const boardSlice = createSlice({
       state.data.mine = action.payload;
     },
   },
-  extraReducers: (builder) => {
-    builder.addCase(openCellAsync.fulfilled, (state, action) => {
-      const { boardData, stop, openedCount } = action.payload;
-      state.boardData = boardData;
-      state.openedCount += openedCount;
-      if (stop) {
-        state.stop = true;
-        state.result = "WIN!";
-      }
-    });
-  },
 });
 
 export const {
@@ -147,6 +134,7 @@ export const {
   updateBoard,
   clickedMine,
   updateCell,
+  openCell,
   incrementTimer,
   setStatus,
   updateRow,
