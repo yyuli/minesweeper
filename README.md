@@ -1,5 +1,5 @@
 # Mine Sweeper
-<img width="1090" alt="minesweeper" src="https://github.com/yyuli/minesweeper/assets/119276010/9a23a542-e688-4cdf-882e-d69157d58ad6">
+<img width="1090" alt="minesweeper" src="https://github.com/yyuli/minesweeper/assets/119276010/e897f82d-fc17-4d34-b2e7-915fb91c0b1e">
 <br>
 <br>
 
